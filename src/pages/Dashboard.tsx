@@ -4,16 +4,16 @@ import { BrokerOverview } from "../components/broker/BrokerOverview"
 
 export function Dashboard() {
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 h-[calc(100vh-8rem)]">
-      <div className="lg:col-span-1">
+    <div className="space-y-6 lg:space-y-0 lg:grid lg:grid-cols-12 lg:gap-6 h-auto lg:h-[calc(100vh-8rem)]">
+      <div className="lg:col-span-4 xl:col-span-3">
         <BorrowerPipeline />
       </div>
       
-      <div className="lg:col-span-1">
+      <div className="lg:col-span-5 xl:col-span-6">
         <BorrowerDetail />
       </div>
       
-      <div className="lg:col-span-1">
+      <div className="lg:col-span-3 xl:col-span-3">
         <BrokerOverview />
       </div>
     </div>

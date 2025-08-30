@@ -19,9 +19,11 @@ export function BorrowerDetail() {
 
   if (!selectedBorrower) {
     return (
-      <Card className="h-full">
+      <Card className="h-full min-h-[400px]">
         <CardContent className="flex items-center justify-center h-full">
-          <p className="text-muted-foreground">Select a borrower to view details</p>
+          <p className="text-muted-foreground text-center">
+            Select a borrower to view details
+          </p>
         </CardContent>
       </Card>
     )
@@ -44,28 +46,28 @@ export function BorrowerDetail() {
 
   return (
     <Card className="h-full">
-      <CardHeader>
+      <CardHeader className="pb-4">
         <div className="space-y-4">
-          <div className="space-y-2">
-            <div className="flex items-center justify-between">
-              <h2 className="text-2xl font-bold">{selectedBorrower.name}</h2>
+          <div className="space-y-3">
+            <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between space-y-2 sm:space-y-0">
+              <h2 className="text-xl sm:text-2xl font-bold truncate">{selectedBorrower.name}</h2>
               <Badge className={getStatusColor(selectedBorrower.status)} variant="secondary">
                 {selectedBorrower.status}
               </Badge>
             </div>
             
-            <div className="flex items-center space-x-4 text-sm text-muted-foreground">
+            <div className="flex flex-col sm:flex-row sm:items-center space-y-2 sm:space-y-0 sm:space-x-4 text-sm text-muted-foreground">
               <div className="flex items-center space-x-1">
-                <Mail className="h-4 w-4" />
-                <span>{selectedBorrower.email}</span>
+                <Mail className="h-4 w-4 flex-shrink-0" />
+                <span className="truncate">{selectedBorrower.email}</span>
               </div>
               <div className="flex items-center space-x-1">
-                <Phone className="h-4 w-4" />
+                <Phone className="h-4 w-4 flex-shrink-0" />
                 <span>{selectedBorrower.phone}</span>
               </div>
             </div>
             
-            <p className="text-lg font-semibold">
+            <p className="text-base sm:text-lg font-semibold">
               Loan Amount: {formatCurrency(selectedBorrower.amount)}
             </p>
           </div>
@@ -78,23 +80,26 @@ export function BorrowerDetail() {
             <AccordionItem value="ai-flags">
               <AccordionTrigger className="text-left">
                 <div className="flex items-center space-x-2">
-                  <AlertTriangle className="h-4 w-4 text-red-500" />
-                  <span>AI Explainability ({selectedBorrower.ai_flags.length} issues)</span>
+                  <AlertTriangle className="h-4 w-4 text-red-500 flex-shrink-0" />
+                  <span className="text-sm sm:text-base">
+                    AI Explainability ({selectedBorrower.ai_flags.length} issues)
+                  </span>
                 </div>
               </AccordionTrigger>
               <AccordionContent>
-                <div className="space-y-2">
+                <div className="space-y-3">
                   {selectedBorrower.ai_flags.map((flag, index) => (
                     <Alert key={index} className="border-red-200 dark:border-red-800">
                       <AlertTriangle className="h-4 w-4 text-red-500" />
-                      <AlertDescription>{flag}</AlertDescription>
+                      <AlertDescription className="text-sm">{flag}</AlertDescription>
                     </Alert>
                   ))}
                   
-                  <div className="flex flex-wrap gap-2 mt-4">
+                  <div className="flex flex-col sm:flex-row gap-2 mt-4">
                     <Button 
                       variant="outline" 
                       size="sm"
+                      className="w-full sm:w-auto"
                       onClick={() => requestDocuments(selectedBorrower.id)}
                     >
                       Request Documents
@@ -102,12 +107,14 @@ export function BorrowerDetail() {
                     <Button 
                       variant="outline" 
                       size="sm"
+                      className="w-full sm:w-auto"
                       onClick={() => sendToValuer(selectedBorrower.id)}
                     >
                       Send to Valuer
                     </Button>
                     <Button 
                       size="sm"
+                      className="w-full sm:w-auto"
                       onClick={() => approveLoan(selectedBorrower.id)}
                     >
                       Approve
@@ -121,49 +128,52 @@ export function BorrowerDetail() {
 
         <Separator />
 
+        {/* Loan Summary - Mobile responsive grid */}
         <div className="space-y-4">
-          <h3 className="text-lg font-semibold">Loan Summary</h3>
+          <h3 className="text-base sm:text-lg font-semibold">Loan Summary</h3>
           
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-1">
-              <p className="text-sm text-muted-foreground">Employment</p>
-              <p className="font-medium">{selectedBorrower.employment}</p>
+              <p className="text-xs sm:text-sm text-muted-foreground">Employment</p>
+              <p className="font-medium text-sm sm:text-base">{selectedBorrower.employment}</p>
             </div>
             
             <div className="space-y-1">
-              <p className="text-sm text-muted-foreground">Income</p>
-              <p className="font-medium">
+              <p className="text-xs sm:text-sm text-muted-foreground">Income</p>
+              <p className="font-medium text-sm sm:text-base">
                 {selectedBorrower.income ? formatCurrency(selectedBorrower.income) : 'N/A'}
               </p>
             </div>
             
             <div className="space-y-1">
-              <p className="text-sm text-muted-foreground">Existing Loan</p>
-              <p className="font-medium">
+              <p className="text-xs sm:text-sm text-muted-foreground">Existing Loan</p>
+              <p className="font-medium text-sm sm:text-base">
                 {selectedBorrower.existing_loan ? formatCurrency(selectedBorrower.existing_loan) : 'None'}
               </p>
             </div>
             
             <div className="space-y-1">
-              <p className="text-sm text-muted-foreground">Credit Score</p>
-              <p className="font-medium">{selectedBorrower.credit_score}</p>
+              <p className="text-xs sm:text-sm text-muted-foreground">Credit Score</p>
+              <p className="font-medium text-sm sm:text-base">{selectedBorrower.credit_score}</p>
             </div>
             
-            <div className="space-y-1 col-span-2">
-              <p className="text-sm text-muted-foreground">Source of Funds</p>
-              <p className="font-medium">{selectedBorrower.source_of_funds}</p>
+            <div className="space-y-1 col-span-1 sm:col-span-2">
+              <p className="text-xs sm:text-sm text-muted-foreground">Source of Funds</p>
+              <p className="font-medium text-sm sm:text-base">{selectedBorrower.source_of_funds}</p>
             </div>
           </div>
 
+          {/* Risk Signal */}
           {selectedBorrower.risk_signal && (
             <Alert className="border-orange-200 dark:border-orange-800">
               <AlertTriangle className="h-4 w-4 text-orange-500" />
-              <AlertDescription>
+              <AlertDescription className="text-sm">
                 <strong>Risk Signal:</strong> {selectedBorrower.risk_signal}
               </AlertDescription>
             </Alert>
           )}
 
+          {/* Escalate Button - Full width on mobile */}
           <Button 
             className="w-full" 
             size="lg"

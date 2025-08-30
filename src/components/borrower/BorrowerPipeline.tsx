@@ -24,7 +24,6 @@ export function BorrowerPipeline() {
       const pipeline = await mockApi.getBorrowerPipeline()
       setBorrowerPipeline(pipeline)
       
-      // Auto-select first borrower if none selected
       if (!selectedBorrower && pipeline.new.length > 0) {
         const firstBorrower = await mockApi.getBorrowerDetail(pipeline.new[0].id)
         if (firstBorrower) {
@@ -73,18 +72,24 @@ export function BorrowerPipeline() {
 
   return (
     <Card className="h-full">
-      <CardHeader>
-        <CardTitle>Borrower Pipeline</CardTitle>
+      <CardHeader className="pb-3">
+        <CardTitle className="text-lg sm:text-xl">Borrower Pipeline</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
         <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as TabType)}>
-          <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="new">New</TabsTrigger>
-            <TabsTrigger value="in_review">In Review</TabsTrigger>
-            <TabsTrigger value="approved">Approved</TabsTrigger>
+          <TabsList className="grid w-full grid-cols-3 h-auto">
+            <TabsTrigger value="new" className="text-xs sm:text-sm px-2 py-2">
+              New
+            </TabsTrigger>
+            <TabsTrigger value="in_review" className="text-xs sm:text-sm px-2 py-2">
+              In Review
+            </TabsTrigger>
+            <TabsTrigger value="approved" className="text-xs sm:text-sm px-2 py-2">
+              Approved
+            </TabsTrigger>
           </TabsList>
           
-          <TabsContent value="new" className="space-y-2">
+          <TabsContent value="new" className="space-y-2 mt-4">
             {getBorrowersByTab('new').map((borrower) => (
               <BorrowerCard
                 key={borrower.id}
@@ -96,7 +101,7 @@ export function BorrowerPipeline() {
             ))}
           </TabsContent>
           
-          <TabsContent value="in_review" className="space-y-2">
+          <TabsContent value="in_review" className="space-y-2 mt-4">
             {getBorrowersByTab('in_review').map((borrower) => (
               <BorrowerCard
                 key={borrower.id}
@@ -108,9 +113,11 @@ export function BorrowerPipeline() {
             ))}
           </TabsContent>
           
-          <TabsContent value="approved" className="space-y-2">
+          <TabsContent value="approved" className="space-y-2 mt-4">
             {getBorrowersByTab('approved').length === 0 ? (
-              <p className="text-center text-muted-foreground py-4">No approved borrowers</p>
+              <p className="text-center text-muted-foreground py-8 text-sm">
+                No approved borrowers
+              </p>
             ) : (
               getBorrowersByTab('approved').map((borrower) => (
                 <BorrowerCard
@@ -125,18 +132,18 @@ export function BorrowerPipeline() {
           </TabsContent>
         </Tabs>
 
-        <div className="space-y-3">
-          <h3 className="text-sm font-medium uppercase tracking-wide text-muted-foreground">
+        <div className="space-y-3 pt-4">
+          <h3 className="text-xs sm:text-sm font-medium uppercase tracking-wide text-muted-foreground">
             F-SANITISED ACTIVE
           </h3>
           <RadioGroup defaultValue="active" className="space-y-2">
             <div className="flex items-center space-x-2">
               <RadioGroupItem value="active" id="active" />
-              <Label htmlFor="active">Active Pipeline</Label>
+              <Label htmlFor="active" className="text-sm">Active Pipeline</Label>
             </div>
             <div className="flex items-center space-x-2">
               <RadioGroupItem value="archived" id="archived" />
-              <Label htmlFor="archived">Archived</Label>
+              <Label htmlFor="archived" className="text-sm">Archived</Label>
             </div>
           </RadioGroup>
         </div>
@@ -160,14 +167,14 @@ function BorrowerCard({ borrower, isSelected, onClick, getStatusColor }: Borrowe
       }`}
       onClick={onClick}
     >
-      <div className="flex items-center justify-between">
-        <div className="space-y-1">
-          <p className="font-medium">{borrower.name}</p>
-          <p className="text-sm text-muted-foreground">{borrower.loan_type}</p>
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-2 sm:space-y-0">
+        <div className="space-y-1 min-w-0 flex-1">
+          <p className="font-medium text-sm sm:text-base truncate">{borrower.name}</p>
+          <p className="text-xs sm:text-sm text-muted-foreground">{borrower.loan_type}</p>
         </div>
-        <div className="text-right space-y-1">
-          <p className="font-medium">{formatCurrency(borrower.amount)}</p>
-          <Badge className={getStatusColor(borrower.status)} variant="secondary">
+        <div className="flex items-center justify-between sm:flex-col sm:items-end sm:text-right sm:space-y-1">
+          <p className="font-medium text-sm sm:text-base">{formatCurrency(borrower.amount)}</p>
+          <Badge className={`${getStatusColor(borrower.status)} text-xs`} variant="secondary">
             {borrower.status}
           </Badge>
         </div>

@@ -63,7 +63,7 @@ const mockBorrowerDetails: Record<string, Borrower> = {
     existing_loan: 15000,
     credit_score: 680,
     source_of_funds: "Business Income",
-    risk_signal: "Low credit score",
+    risk_signal: null,  // Now correctly typed as null
     ai_flags: [
       "Irregular income pattern"
     ]
@@ -81,7 +81,7 @@ const mockBorrowerDetails: Record<string, Borrower> = {
     existing_loan: 0,
     credit_score: 780,
     source_of_funds: "Salary",
-    risk_signal: null,
+    risk_signal: null,  // Now correctly typed as null
     ai_flags: []
   }
 }
@@ -117,7 +117,8 @@ export const mockApi = {
     return mockBorrowerDetails[id] || null
   },
   
-  getBrokerInfo: async (id: string): Promise<BrokerInfo> => {
+  // Fixed: Prefix unused parameter with underscore to suppress warning
+  getBrokerInfo: async (_id: string): Promise<BrokerInfo> => {
     await new Promise(resolve => setTimeout(resolve, 400))
     return mockBrokerInfo
   },
