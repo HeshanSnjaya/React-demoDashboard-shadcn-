@@ -1,0 +1,128 @@
+import { useEffect } from "react"
+import { Phone, Mail, MessageCircle, CheckCircle, Clock } from "lucide-react"
+import { Card, CardContent, CardHeader, CardTitle } from "../ui/card"
+import { Button } from "../ui/button"
+import { Switch } from "../ui/switch"
+import { Label } from "../ui/label"
+import { Separator } from "../ui/separator"
+import { useAppStore } from "../../store/useAppStore"
+import { mockApi } from "../../services/mockApi"
+import { formatCurrency } from "../../lib/utils"
+
+export function BrokerOverview() {
+  const { 
+    brokerInfo, 
+    onboardingWorkflow, 
+    setBrokerInfo, 
+    setOnboardingWorkflow 
+  } = useAppStore()
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const [broker, workflow] = await Promise.all([
+        mockApi.getBrokerInfo("1"),
+        mockApi.getOnboardingWorkflow()
+      ])
+      
+      setBrokerInfo(broker)
+      setOnboardingWorkflow(workflow)
+    }
+    
+    fetchData()
+  }, [setBrokerInfo, setOnboardingWorkflow])
+
+  if (!brokerInfo || !onboardingWorkflow) {
+    return (
+      <Card className="h-full">
+        <CardContent className="flex items-center justify-center h-full">
+          <p className="text-muted-foreground">Loading broker info...</p>
+        </CardContent>
+      </Card>
+    )
+  }
+
+  return (
+    <Card className="h-full">
+      <CardHeader>
+        <CardTitle>Broker Overview</CardTitle>
+      </CardHeader>
+      
+      <CardContent className="space-y-6">
+        <div className="space-y-4">
+          <h3 className="text-lg font-semibold">{brokerInfo.name}</h3>
+          
+          <div className="grid grid-cols-3 gap-4 text-center">
+            <div className="space-y-1">
+              <p className="text-2xl font-bold">{brokerInfo.deals}</p>
+              <p className="text-xs text-muted-foreground">Deals</p>
+            </div>
+            <div className="space-y-1">
+              <p className="text-2xl font-bold">{brokerInfo.approval_rate}</p>
+              <p className="text-xs text-muted-foreground">Approval Rate</p>
+            </div>
+            <div className="space-y-1">
+              <p className="text-2xl font-bold">{formatCurrency(brokerInfo.pending)}</p>
+              <p className="text-xs text-muted-foreground">Pending</p>
+            </div>
+          </div>
+
+          <div className="flex space-x-2">
+            <Button variant="outline" size="sm" className="flex-1">
+              <Phone className="h-4 w-4 mr-1" />
+              Call
+            </Button>
+            <Button variant="outline" size="sm" className="flex-1">
+              <Mail className="h-4 w-4 mr-1" />
+              Email
+            </Button>
+            <Button variant="outline" size="sm" className="flex-1">
+              <MessageCircle className="h-4 w-4 mr-1" />
+              Chat
+            </Button>
+          </div>
+        </div>
+
+        <Separator />
+
+        <div className="space-y-4">
+          <h3 className="text-lg font-semibold">Onboarding Workflow</h3>
+          
+          <div className="space-y-3">
+            {onboardingWorkflow.steps.map((step, index) => (
+              <div key={index} className="flex items-center space-x-3">
+                <div className="flex-shrink-0 w-6 h-6 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-xs font-medium">
+                  {index + 1}
+                </div>
+                <div className="flex-1 flex items-center justify-between">
+                  <span className="text-sm">{step}</span>
+                  {index < 3 ? (
+                    <CheckCircle className="h-4 w-4 text-green-500" />
+                  ) : index === 3 ? (
+                    <Clock className="h-4 w-4 text-yellow-500" />
+                  ) : (
+                    <div className="h-4 w-4 rounded-full border-2 border-muted-foreground" />
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <Separator />
+
+        <div className="space-y-4">
+          <h3 className="text-lg font-semibold">AI Assistant</h3>
+          
+          <div className="flex items-center space-x-2">
+            <Switch id="ai-assistant" defaultChecked />
+            <Label htmlFor="ai-assistant">Enable AI Assistant</Label>
+          </div>
+          
+          <p className="text-sm text-muted-foreground">
+            AI Assistant will help automate document review and risk assessment.
+          </p>
+        </div>
+      </CardContent>
+    </Card>
+  )
+}
