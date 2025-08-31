@@ -11,7 +11,8 @@ export function Header() {
   const logout = useAuthStore(s => s.logout)
   const { pathname } = useLocation()
 
-  const isLoginRoute = pathname.startsWith("/login")
+  const isLoginPage = pathname === "/login"
+  const showActionIcons = !!user && !isLoginPage
 
   return (
     <header className="sticky top-0 z-50 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -19,29 +20,57 @@ export function Header() {
         <h1 className="text-lg sm:text-xl font-bold truncate">DemoApp</h1>
 
         <div className="hidden sm:flex items-center gap-2 shrink-0">
-          <Button variant="ghost" size="icon" className="h-8 w-8"><Search className="h-4 w-4" /></Button>
-          <Button variant="ghost" size="icon" className="h-8 w-8"><HelpCircle className="h-4 w-4" /></Button>
-          <Button variant="ghost" size="icon" className="h-8 w-8"><Bell className="h-4 w-4" /></Button>
+          {showActionIcons && (
+            <>
+              <Button variant="ghost" size="icon" className="h-8 w-8">
+                <Search className="h-4 w-4" />
+              </Button>
+              <Button variant="ghost" size="icon" className="h-8 w-8">
+                <HelpCircle className="h-4 w-4" />
+              </Button>
+              <Button variant="ghost" size="icon" className="h-8 w-8">
+                <Bell className="h-4 w-4" />
+              </Button>
+            </>
+          )}
+          
           <ThemeToggle />
-          {/* Show logout only if authenticated and not on /login */}
-          {user && !isLoginRoute && (
-            <Button variant="outline" size="sm" onClick={logout}>Logout</Button>
+          
+          {user && !isLoginPage && (
+            <Button variant="outline" size="sm" onClick={logout}>
+              Logout
+            </Button>
           )}
         </div>
 
         <div className="flex sm:hidden items-center gap-2">
           <ThemeToggle />
-          <Button variant="ghost" size="icon" onClick={() => setOpen(!open)}><Menu className="h-4 w-4" /></Button>
+          <Button variant="ghost" size="icon" onClick={() => setOpen(!open)}>
+            <Menu className="h-4 w-4" />
+          </Button>
         </div>
       </div>
 
       {open && (
         <div className="sm:hidden border-t bg-background p-4 space-y-2">
-          <Button variant="ghost" className="w-full justify-start"><Search className="h-4 w-4 mr-2" />Search</Button>
-          <Button variant="ghost" className="w-full justify-start"><HelpCircle className="h-4 w-4 mr-2" />Help</Button>
-          <Button variant="ghost" className="w-full justify-start"><Bell className="h-4 w-4 mr-2" />Notifications</Button>
-          {user && !isLoginRoute && (
-            <Button variant="outline" className="w-full" onClick={logout}>Logout</Button>
+          {showActionIcons && (
+            <>
+              <Button variant="ghost" className="w-full justify-start">
+                <Search className="h-4 w-4 mr-2" />Search
+              </Button>
+              <Button variant="ghost" className="w-full justify-start">
+                <HelpCircle className="h-4 w-4 mr-2" />Help
+              </Button>
+              <Button variant="ghost" className="w-full justify-start">
+                <Bell className="h-4 w-4 mr-2" />Notifications
+              </Button>
+            </>
+          )}
+          
+          {user && !isLoginPage && (
+            <Button variant="outline" className="w-full" onClick={logout}>
+              Logout
+            </Button>
           )}
         </div>
       )}
