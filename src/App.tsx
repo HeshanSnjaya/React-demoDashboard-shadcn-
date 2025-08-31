@@ -1,20 +1,17 @@
-import { useEffect } from 'react'
-import { Layout } from './components/layout/Layout'
-import { Dashboard } from './pages/Dashboard'
-import { useAppStore } from './store/useAppStore'
+import { useEffect } from "react"
+import { Layout } from "@/components/layout/Layout"
+import { useAppStore } from "@/store/useAppStore"
+import { Outlet } from "react-router-dom"
 
-function App() {
-  const theme = useAppStore(state => state.theme)
-
+export default function App() {
+  const theme = useAppStore(s => s.theme)
   useEffect(() => {
-    document.documentElement.classList.toggle('dark', theme === 'dark')
+    document.documentElement.classList.toggle("dark", theme === "dark")
   }, [theme])
 
   return (
     <Layout>
-      <Dashboard />
+      <Outlet />
     </Layout>
   )
 }
-
-export default App
