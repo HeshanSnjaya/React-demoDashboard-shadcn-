@@ -1,7 +1,6 @@
 import { test, expect } from '@playwright/test';
 
 test.describe('Dashboard Functionality', () => {
-  // Login before each test
   test.beforeEach(async ({ page }) => {
     await page.goto('/login');
     await page.click('button:has-text("Admin")');
@@ -9,65 +8,48 @@ test.describe('Dashboard Functionality', () => {
   });
 
   test('pipeline tabs update borrower list and active profile', async ({ page }) => {
-    // Check New tab is active by default
     await expect(page.locator('[role="tab"][aria-selected="true"]')).toContainText('New');
 
-    // Click on In Review tab
     await page.click('[role="tab"]:has-text("In Review")');
     await expect(page.locator('[role="tab"][aria-selected="true"]')).toContainText('In Review');
 
-    // Verify borrower list updates
     await expect(page.locator('text=Alan Matthews')).toBeVisible();
   });
 
   test('borrower selection updates the center pane', async ({ page }) => {
-    // Click on a borrower card
     await page.click('text=Sarah Dunn');
-
-    // Wait for the center panel to update
     await page.waitForTimeout(500);
 
-    // Verify center panel updates - use .first() to avoid strict mode violation
-    await expect(page.locator('text=sarah.dunn@example.com')).toBeVisible();
-    await expect(page.locator('text=$300,000').first()).toBeVisible();
+    await expect(page.getByTestId('borrower-email')).toContainText('sarah.dunn@example.com');
+    await expect(page.getByTestId('loan-amount')).toContainText('$300,000');
   });
 
   test('AI Explainability section renders flags and is collapsible', async ({ page }) => {
-    // Select borrower with AI flags
     await page.click('text=Sarah Dunn');
     await page.waitForTimeout(500);
 
-    // Look for accordion trigger with more specific selector
-    const accordionTrigger = page.locator('button:has-text("AI Explainability")').first();
-    await accordionTrigger.click();
+    await page.getByTestId('ai-explainability-trigger').click();
+    
+    await expect(page.getByTestId('ai-explainability-content')).toBeVisible();
 
-    // Wait for accordion animation
-    await page.waitForTimeout(500);
+    await expect(page.getByTestId('ai-flags')).toContainText('Income Inconsistent with Bank statements');
+    await expect(page.getByTestId('ai-flags')).toContainText('High Debt-to-Income Ratio detected');
 
-    // Verify AI flags are visible
-    await expect(page.locator('text=Income Inconsistent')).toBeVisible();
-    await expect(page.locator('text=High Debt-to-Income Ratio')).toBeVisible();
-
-    // Verify action buttons are present
-    await expect(page.locator('button:has-text("Request Documents")')).toBeVisible();
-    await expect(page.locator('button:has-text("Send to Valuer")')).toBeVisible();
+    await expect(page.getByTestId('btn-request-docs')).toBeVisible();
+    await expect(page.getByTestId('btn-send-valuer')).toBeVisible();
   });
 
   test('button clicks log appropriate console outputs', async ({ page }) => {
-    // Listen for console messages
     const consoleMessages: string[] = [];
     page.on('console', msg => consoleMessages.push(msg.text()));
 
     await page.click('text=Sarah Dunn');
     await page.waitForTimeout(500);
     
-    // Expand accordion
-    const accordionTrigger = page.locator('button:has-text("AI Explainability")').first();
-    await accordionTrigger.click();
-    await page.waitForTimeout(500);
+    await page.getByTestId('ai-explainability-trigger').click();
+    await expect(page.getByTestId('ai-explainability-content')).toBeVisible();
 
-    // Click action buttons and verify console logs
-    await page.click('button:has-text("Request Documents")');
+    await page.getByTestId('btn-request-docs').click();
     await page.waitForTimeout(200);
 
     expect(consoleMessages.some(msg => msg.includes('Request Documents'))).toBeTruthy();
@@ -77,9 +59,8 @@ test.describe('Dashboard Functionality', () => {
     await page.click('text=Sarah Dunn');
     await page.waitForTimeout(500);
 
-    const escalateButton = page.locator('button:has-text("Escalate to Credit Committee")');
-    await expect(escalateButton).toBeVisible();
-    await expect(escalateButton).toBeEnabled();
+    await expect(page.getByTestId('btn-escalate')).toBeVisible();
+    await expect(page.getByTestId('btn-escalate')).toBeEnabled();
   });
 
   test('responsive layout across screen sizes', async ({ page }) => {

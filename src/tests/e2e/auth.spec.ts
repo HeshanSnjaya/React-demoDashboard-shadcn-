@@ -12,7 +12,8 @@ test.describe('Authentication Flow', () => {
     await page.fill('input[name="username"]', 'testuser');
     await page.fill('input[name="password"]', 'password123');
     
-    await page.locator('select').selectOption({ label: 'Administrator' });
+    await page.getByTestId('role-select-trigger').click();
+    await page.locator('[data-value="ADMIN"]').click();
 
     await page.click('button:has-text("Sign In")');
 
